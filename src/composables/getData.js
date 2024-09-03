@@ -1,0 +1,28 @@
+import axios from 'axios'
+import { ref } from 'vue'
+
+export const useGetData = () => {
+  const data = ref(null)
+  const errorData = ref(null)
+  const loading = ref(true)
+
+  const getData = async (url) => {
+    try {
+      const res = await axios.get(url)
+      console.log(res.data)
+      data.value = res.data
+    } catch (error) {
+      console.log(error)
+      errorData.value = 'Error del servidor'
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return {
+    getData,
+    data,
+    loading,
+    errorData
+  }
+}
