@@ -1,10 +1,14 @@
 <script setup>
 import { useGetData } from '@/composables/getData';
 import SearchInput from "../components/SearchInput.vue"
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useGetAllCharacters } from '@/composables/getAllCharactes';
 
 const currentPage = ref(1);
+const searchTerm = ref('');
+
 const { getData, data, loading, errorData } = useGetData();
+const { getAllCharactersData, characters } = useGetAllCharacters();
 
 const loadPage = (page) => {
   getData(`https://dragonball-api.com/api/characters?page=${page}`);
@@ -13,15 +17,14 @@ const loadPage = (page) => {
 
 loadPage(currentPage.value);
 
-const getCharactersByName = (characterName) => {
-  console.log(characterName)
-  getData(`https://dragonball-api.com/api/characters?name=${characterName}`)
-  console.log(data.value)
-}
+getAllCharactersData();
 
-const resetCharacters = () => {
-  loadPage(1);
-};
+const filteredCharacters = computed(() => {
+  if (!searchTerm.value) {
+    return characters.value?.items || [];
+  }
+  return characters.value?.filter(character => character.name.toLowerCase().includes(searchTerm.value.toLowerCase()))
+})
 </script>
 
 <template>
@@ -30,27 +33,24 @@ const resetCharacters = () => {
     <p v-if="loading">Cargando...</p>
     <p v-if="errorData">{{ errorData }}</p>
 
-    <SearchInput @search="getCharactersByName" />
-
-    <!-- <p v-if="data && data.items?.length === 0">No hay</p> -->
+    <SearchInput v-model="searchTerm" />
 
     <div v-if="data">
 
       <!-- Muestra por personaje -->
-      <div v-if="Array.isArray(data)">
+      <div v-if="filteredCharacters.length > 0">
         <ul class="characters__container">
-          <li v-for="(character) in data" :key="character.id" class="li__characters">
+          <li v-for="(character) in filteredCharacters" :key="character.id" class="li__characters">
             <router-link :to="`/characters/${character.id}`" class="character__link">
               {{ character.name }}
               <img :src="character.image" :alt="character.name" width="auto" height="200">
             </router-link>
           </li>
         </ul>
-        <button @click="resetCharacters" class="btn-pagination">Ver todos los personajes</button>
       </div>
 
       <!-- Muestra todos los personajes -->
-      <ul v-else-if="data.items" class="characters__container">
+      <ul v-if="data.items" class="characters__container">
         <li v-for="(character) in data.items" :key="character.id" class="li__characters">
           <router-link :to="`/characters/${character.id}`" class="character__link">
             {{ character.name }}
@@ -94,6 +94,7 @@ section {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  margin: 50px 0px;
 }
 
 .li__characters {
