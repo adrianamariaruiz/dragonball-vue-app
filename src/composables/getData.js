@@ -9,7 +9,6 @@ export const useGetData = () => {
   const getData = async (url) => {
     try {
       const res = await axios.get(url)
-      console.log(res.data)
       data.value = res.data
     } catch (error) {
       console.log(error)

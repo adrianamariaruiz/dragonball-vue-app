@@ -3,10 +3,11 @@
 
 <template>
   <section>
+    <img src="https://dragonball-api.com/characters/goku_normal.webp" alt="Dragonball image" width="auto" height="300">
     <h1>Bienvenido a la página de Dragonball</h1>
-    <button>
+    <RouterLink to="/characters" class="linkToView">
       Continuar!
-    </button>
+    </RouterLink>
   </section>
 </template>
 
@@ -22,18 +23,20 @@ h1 {
   font-size: 45px;
 }
 
-button {
-  background-color: transparent;
+.linkToView {
+  border: 1px solid var(--color-background-btn);
   color: var(--color-background-btn);
-  font-size: 20px;
-  padding: 10px 20px;
-  max-width: 140px;
   border-radius: 10px;
-  box-shadow: inset;
+  padding: 10px;
+  font-size: 18px;
+  width: 120px;
+  text-align: center;
   cursor: pointer;
+  background-color: transparent;
 
   &:hover {
     color: var(--color-background-btn-hover);
+    border: 1px solid var(--color-background-btn-hover);
   }
 }
 </style>
